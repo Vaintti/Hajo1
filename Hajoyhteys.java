@@ -1,7 +1,3 @@
-import java.net.DatagramSocket;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.Socket;
 import java.net.*;
 import java.util.*;
 import java.io.*;
@@ -48,13 +44,9 @@ public class Hajoyhteys {
 		ObjectOutputStream objectOut = new ObjectOutputStream(out);
 		tcpSocket.setSoTimeout(5000);
 		int t = objectIn.readInt();
-		while (true) {
-			//try{
-			
-			System.out.println(t);
-			//}catch(EOFException e){
-			//	e.printStackTrace();
-			//}
+		System.out.println(t);
+		for(int tt = 0; tt  < t; t++){
+			objectOut.writeInt(tcpPort+1+tt);
 		}
 
 	}
