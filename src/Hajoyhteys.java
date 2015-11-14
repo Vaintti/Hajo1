@@ -46,7 +46,7 @@ public class Hajoyhteys {
 		int t = objectIn.readInt();
 		System.out.println(t);
 		for(int tt = 0; tt  < t; t++){
-			objectOut.writeInt(tcpPort+1+tt);
+			objectOut.writeInt(Integer.parseInt(tcpPort) + 1 + tt);
 		}
 
 	}
