@@ -43,9 +43,14 @@ public class Hajoyhteys {
 		ObjectInputStream objectIn = new ObjectInputStream(in);
 		ObjectOutputStream objectOut = new ObjectOutputStream(out);
 		tcpSocket.setSoTimeout(5000);
-		int t = objectIn.readInt();
+		try{
+			int t = objectIn.readInt();
+		}catch(SocketException e){
+			
+		}
+		
 		System.out.println(t);
-		for(int tt = 0; tt  < t; t++){
+		for(int tt = 0; tt  < t; tt++){
 			objectOut.writeInt(Integer.parseInt(tcpPort) + 1 + tt);
 		}
 
