@@ -1,9 +1,10 @@
 
 public class Summaaja implements Runnable {
+	int port;
+	public Summaaja(int portti){
+		portti = this.port;
+	}
 	public void run(){
 		System.out.println("kakkaa");
-	}
-	public static void main(String[] args){
-		(new Thread(new Summaaja())).start();
 	}
 }

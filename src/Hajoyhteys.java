@@ -6,10 +6,10 @@ import java.lang.Thread;
 public class Hajoyhteys {
 	static Socket tcpSocket;
 	static ServerSocket tcpServerSocket;
+	
+	public static int[] summat;
 
 	public static void main(String[] args) throws Exception {
-		Summaaja summaaja = new Summaaja();
-		(new Thread(summaaja)).start();
 		// Udp portti jonne yhteydenottoviesti l‰hetet‰‰n 
 		int udpPort = 3126;
 		// Tcp-portti johon palvelimen pyydet‰‰n ottamaan yhteytt‰
@@ -58,14 +58,19 @@ public class Hajoyhteys {
 		int t = 0;
 		try{
 			t = objectIn.readInt();
+			summat = new int[t];
 		}catch(SocketException e){
 			objectOut.writeInt(-1);
 			System.exit(0);
 		}
 		// L‰hetet‰‰n summauspalvelimien portteja
-		System.out.println("L‰hetet‰‰n " + t + "porttia");
+		System.out.println("L‰hetet‰‰n " + t + " porttia");
 		for(int tt = 0; tt  < t; tt++){
 			objectOut.writeInt(Integer.parseInt(tcpPort) + 1 + tt);
+		}
+		for(int x = 0; x < t; x++){
+			Summaaja summaaja = new Summaaja(x+1);
+			(new Thread(summaaja)).start();
 		}
 
 	}
