@@ -13,9 +13,11 @@ public class Summaaja implements Runnable {
 	ObjectInputStream objectIn;
 	ObjectOutputStream objectOut;
 	int x;
+	int indeksi;
 	
-	public Summaaja(int portti){
-		portti = this.port;
+	public Summaaja(int portti, int indeksi){
+		this.port = portti;
+		this.indeksi = indeksi;
 	}
 	public void run(){
 		try{
@@ -40,6 +42,10 @@ public class Summaaja implements Runnable {
 			}catch(Exception e){
 				System.out.println("Syötettä ei pystytty lukemaan.");
 			}
+			if(x == 0){
+				//lopetetaan
+			}
+			Hajoyhteys.lokerot.lisaa(indeksi, x);
 		}
 	}
 }
