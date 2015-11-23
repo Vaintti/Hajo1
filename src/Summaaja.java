@@ -7,9 +7,7 @@ public class Summaaja implements Runnable {
 	private ServerSocket serverSocket;
 	private Socket socket;
 	private InputStream in;
-	private OutputStream out;
 	private ObjectInputStream objectIn;
-	private ObjectOutputStream objectOut;
 	private int x;
 	private int indeksi;
 

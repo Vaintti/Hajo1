@@ -11,22 +11,25 @@ public class Hajoyhteys {
 	public static void main(String[] args) throws Exception {
 		// Asetetaan p‰‰luokan prioriteetti korkeimmaksi ettei kutsujen v‰leiss‰ tapahdu muutoksia
 		Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-		
+
 		// Udp portti jonne yhteydenottoviesti l‰hetet‰‰n 
 		int udpPort = 3126;
-		
+
 		// Tcp-portti johon palvelimen pyydet‰‰n ottamaan yhteytt‰
 		String tcpPort = "10000";
-		
+
 		// Tcp-portti bittein‰
 		byte[] tcpPortBytes = tcpPort.getBytes();
-		
+
 		// Osoite johon otetaan yhteytt‰
 		InetAddress os = InetAddress.getByName("localhost");
-		
+
 		// maksimim‰‰r‰ ep‰onnistuneita yhteydenottoja
 		int connectionFails = 5;
-		
+
+		// Luodaan arraylist s‰ikeisiin viittausta varten.
+		ArrayList<Thread> threads = new ArrayList<Thread>();
+
 		// M‰‰ritet‰‰n tcp serversocket
 		tcpServerSocket = new ServerSocket(Integer.parseInt(tcpPort));
 		while (connectionFails > 0) {
@@ -96,51 +99,65 @@ public class Hajoyhteys {
 		System.out.println("\nAvataan summauspalvelut portteihin.");
 		for(int x = 0; x < t; x++){
 			Summaaja summaaja = new Summaaja(Integer.parseInt(tcpPort) + 1 + x, x);
-			(new Thread(summaaja)).start();
+			threads.add((new Thread(summaaja)));
+			threads.get(threads.size()-1).start();
 			System.out.println("Summapalvelu " + x + " k‰ynnistetty");
 		}
 
 		// Otetaan vastaan WorkDistributorin l‰hett‰mi‰ kyselyit‰ ja vastataan niihin
 		int kysely;
 		while(true){
-			
+
 			// Asetetaan minuutin aikakatkaisu
-			tcpSocket.setSoTimeout(60000);
-			kysely = objectIn.readInt();
-			System.out.println("\nKysely " + kysely + ": ");
+			try{
+				tcpSocket.setSoTimeout(60000);
 
-			// Lopetuskysely
-			if(kysely == 0){
-				System.out.println("Lopetuskysely vastaanotettu. Lopetetaan");
+				kysely = objectIn.readInt();
+
+				System.out.println("\nKysely " + kysely + ": ");
+
+				// Lopetuskysely
+				if(kysely == 0){
+					System.out.println("Lopetuskysely vastaanotettu. Lopetetaan summauspalvelijat ja sovellus");
+					for(Thread thread : threads){
+						thread.interrupt();
+					}
+					System.exit(0);
+				}
+
+				// Lukujen summan kysely
+				else if(kysely == 1){
+					System.out.println("Summakysely vastaanotettu. Palautetaan kaikkien lukujen summa");
+					objectOut.writeInt(lokerot.getSummienSumma());
+					objectOut.flush();
+				}
+
+				// Suurimman summan kysely
+				else if(kysely == 2){
+					System.out.println("Suuruuskysely vastaanotettu. Palautetaan suurin summa");
+					objectOut.writeInt(lokerot.getSuurin());
+					objectOut.flush();
+				}
+
+				// Vastaanotettujen lukujen lukum‰‰r‰n kysely
+				else if(kysely == 3){
+					System.out.println("M‰‰r‰kysely vastaanotettu. Palautetaan vastaanotettujen lukujen lukum‰‰r‰.");
+					objectOut.writeInt(lokerot.getMaara());
+					objectOut.flush();
+				}
+
+				// Virheellinen kysely
+				else{
+					System.out.println("Virheellinen kysely vastaanotettu. Kirjoitetaan virtaan -1");
+					objectOut.writeInt(-1);
+					objectOut.flush();
+				}
+			}catch(SocketTimeoutException e){
+				System.out.println("Soketin aikakatkaisu. Lopetetaan summauspalvelijat ja sovellus");
+				for(Thread thread : threads){
+					thread.interrupt();
+				}
 				System.exit(0);
-			}
-
-			// Lukujen summan kysely
-			else if(kysely == 1){
-				System.out.println("Summakysely vastaanotettu. Palautetaan kaikkien lukujen summa");
-				objectOut.writeInt(lokerot.getSummienSumma());
-				objectOut.flush();
-			}
-
-			// Suurimman summan kysely
-			else if(kysely == 2){
-				System.out.println("Suuruuskysely vastaanotettu. Palautetaan suurin summa");
-				objectOut.writeInt(lokerot.getSuurin());
-				objectOut.flush();
-			}
-
-			// Vastaanotettujen lukujen lukum‰‰r‰n kysely
-			else if(kysely == 3){
-				System.out.println("M‰‰r‰kysely vastaanotettu. Palautetaan vastaanotettujen lukujen lukum‰‰r‰.");
-				objectOut.writeInt(lokerot.getMaara());
-				objectOut.flush();
-			}
-
-			// Virheellinen kysely
-			else{
-				System.out.println("Virheellinen kysely vastaanotettu. Kirjoitetaan virtaan -1");
-				objectOut.writeInt(-1);
-				objectOut.flush();
 			}
 		}
 	}
