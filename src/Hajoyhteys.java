@@ -74,6 +74,7 @@ public class Hajoyhteys {
 		}
 
 	}
+	//Etsitään ja palautetaan listan suurin summa
 	int getSuurin(int[] lista){
 		int x = lista[0];
 		for(int i = 0; i < lista.length; i++){
@@ -83,7 +84,7 @@ public class Hajoyhteys {
 		}
 		return x;
 	}
-	
+	//Etsitään ja palautetaan listan summien summa
 	int getSummienSumma(int[] lista){
 		int y = lista[0];
 		for(int i = 0; i < lista.length; i++){
