@@ -1,12 +1,15 @@
 import java.net.*;
 import java.util.*;
 import java.io.*;
+import java.lang.Thread;
 
 public class Hajoyhteys {
 	static Socket tcpSocket;
 	static ServerSocket tcpServerSocket;
 
 	public static void main(String[] args) throws Exception {
+		Summaaja summaaja = new Summaaja();
+		(new Thread(summaaja)).start();
 		// Udp portti jonne yhteydenottoviesti l‰hetet‰‰n 
 		int udpPort = 3126;
 		// Tcp-portti johon palvelimen pyydet‰‰n ottamaan yhteytt‰
