@@ -1,4 +1,4 @@
-
+// S‰ilytt‰‰ summat ja saatujen lukujenlukum‰‰r‰n
 public class Lokero {
 	private int[] lista;
 	private int lukumaara;
@@ -10,6 +10,7 @@ public class Lokero {
 
 	// palauttaa kertyneiden lukujen kokonaismaaran
 	public int getMaara() {
+		System.out.println("Lukuja on vastaanotettu " + this.lukumaara);
 		return this.lukumaara;
 	}
 
@@ -37,6 +38,7 @@ public class Lokero {
 				x = i;
 			}
 		}
+		System.out.println("Suurin summa on summa numero " + (x+1));
 		return x+1;
 	}
 
@@ -45,7 +47,6 @@ public class Lokero {
 		int y = 0;
 		for (int i = 0; i < this.lista.length; i++) {
 			y += this.lista[i];
-			System.out.println(lista[i]);
 		}
 		System.out.println("Summa on " + y);
 		return y;
