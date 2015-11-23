@@ -43,13 +43,14 @@ public class Hajoyhteys {
 		ObjectInputStream objectIn = new ObjectInputStream(in);
 		ObjectOutputStream objectOut = new ObjectOutputStream(out);
 		tcpSocket.setSoTimeout(5000);
+		int t = 0;
 		try{
-			int t = objectIn.readInt();
+			t = objectIn.readInt();
 		}catch(SocketException e){
+			System.exit(0);
 			
 		}
-		
-		System.out.println(t);
+		System.out.println("L‰hetet‰‰n " + t + "porttia");
 		for(int tt = 0; tt  < t; tt++){
 			objectOut.writeInt(Integer.parseInt(tcpPort) + 1 + tt);
 		}
