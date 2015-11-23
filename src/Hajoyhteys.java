@@ -125,7 +125,7 @@ public class Hajoyhteys {
 				x = i;
 			}
 		}
-		return x;
+		return x+1;
 	}
 	//Etsitään ja palautetaan listan summien summa
 	static int getSummienSumma(int[] lista){

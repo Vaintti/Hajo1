@@ -41,20 +41,15 @@ public class Summaaja implements Runnable {
 			try{
 				socket.setSoTimeout(10000);
 				x = objectIn.readInt();
+				if(x == 0){
+					break;
+				}
 			}catch(Exception e){
 				System.out.println("Syötettä ei pystytty lukemaan.");
-				break;
-			}
-			if(x == 0){
-				break;
+				return;
 			}
 			System.out.println("Lisätään indeksiin " + indeksi + " luku " + x);
 			Hajoyhteys.lokerot.lisaa(indeksi, x);
-		}
-		try{
-			socket.close();
-			serverSocket.close();
-		}catch(Exception e){
 		}
 	}
 }
