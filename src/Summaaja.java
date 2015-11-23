@@ -1,19 +1,16 @@
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.*;
 
 public class Summaaja implements Runnable {
-	int port;
-	ServerSocket serverSocket;
-	Socket socket;
-	InputStream in;
-	OutputStream out;
-	ObjectInputStream objectIn;
-	ObjectOutputStream objectOut;
-	int x;
-	int indeksi;
+	private int port;
+	private ServerSocket serverSocket;
+	private Socket socket;
+	private InputStream in;
+	private OutputStream out;
+	private ObjectInputStream objectIn;
+	private ObjectOutputStream objectOut;
+	private int x;
+	private int indeksi;
 	
 	public Summaaja(int portti, int indeksi){
 		this.port = portti;
@@ -30,9 +27,7 @@ public class Summaaja implements Runnable {
 		}
 		try{
 			in = socket.getInputStream();
-			out = socket.getOutputStream();
 			objectIn = new ObjectInputStream(in);
-			objectOut = new ObjectOutputStream(out);
 		}catch(Exception e){
 			System.out.println("Datavirtoja ei pystytty avaamaan.");
 			return;
@@ -40,12 +35,19 @@ public class Summaaja implements Runnable {
 		while(true){
 			try{
 				socket.setSoTimeout(10000);
-				x = objectIn.readInt();
-				if(x == 0){
+				try{
+					x = objectIn.readInt();
+					System.out.println(x);
+					if(x == 0){
+						break;
+					}
+				}catch(EOFException eof){
+					break;
+				}catch(IOException io){
 					break;
 				}
-			}catch(Exception e){
-				System.out.println("Syötettä ei pystytty lukemaan.");
+			}catch(SocketException s){
+				s.printStackTrace();
 				return;
 			}
 			System.out.println("Lisätään indeksiin " + indeksi + " luku " + x);

@@ -10,6 +10,7 @@ public class Hajoyhteys {
 	public static Lokero lokerot;
 
 	public static void main(String[] args) throws Exception {
+		Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 		// Udp portti jonne yhteydenottoviesti l‰hetet‰‰n 
 		int udpPort = 3126;
 		// Tcp-portti johon palvelimen pyydet‰‰n ottamaan yhteytt‰
@@ -93,12 +94,12 @@ public class Hajoyhteys {
 				}
 				else if(kysely == 1){
 					System.out.println("Summakysely vastaanotettu. Palautetaan kaikkien lukujen summa");
-					objectOut.writeInt(getSummienSumma(lokerot.getLista()));
+					objectOut.writeInt(lokerot.getSummienSumma());
 					objectOut.flush();
 				}
 				else if(kysely == 2){
 					System.out.println("Suuruuskysely vastaanotettu. Palautetaan suurin summa");
-					objectOut.writeInt(getSuurin(lokerot.getLista()));
+					objectOut.writeInt(lokerot.getSuurin());
 					objectOut.flush();
 				}
 				else if(kysely == 3){
@@ -116,24 +117,6 @@ public class Hajoyhteys {
 				System.exit(0);
 			}
 		}
-	}
-	//Etsit‰‰n ja palautetaan listan suurin summa
-	static int getSuurin(int[] lista){
-		int x = 0;
-		for(int i = 1; i < lista.length; i++){
-			if(lista[i] > lista[x]){
-				x = i;
-			}
-		}
-		return x+1;
-	}
-	//Etsit‰‰n ja palautetaan listan summien summa
-	static int getSummienSumma(int[] lista){
-		int y = lista[0];
-		for(int i = 1; i < lista.length; i++){
-			y = y + lista[i];
-		}
-		return y;
 	}
 	
 	// L‰hett‰‰ tcp portin udp pakettina
