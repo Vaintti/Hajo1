@@ -7,7 +7,7 @@ public class Hajoyhteys {
 	static Socket tcpSocket;
 	static ServerSocket tcpServerSocket;
 	
-	public static int[] summat;
+	public static Lokero lokerot;
 
 	public static void main(String[] args) throws Exception {
 		// Udp portti jonne yhteydenottoviesti l‰hetet‰‰n 
@@ -52,42 +52,85 @@ public class Hajoyhteys {
 		OutputStream out = tcpSocket.getOutputStream();
 		ObjectInputStream objectIn = new ObjectInputStream(in);
 		ObjectOutputStream objectOut = new ObjectOutputStream(out);
+		objectOut.flush();
 		// Asetetaan tcp socketin aikakatkaisun aikaraja
 		tcpSocket.setSoTimeout(5000);
 		// Yritet‰‰n lukea objektivirrasta summauspalvelimien m‰‰r‰
 		int t = 0;
 		try{
 			t = objectIn.readInt();
-			summat = new int[t];
 		}catch(SocketException e){
 			objectOut.writeInt(-1);
+			objectOut.flush();
 			System.exit(0);
 		}
 		// L‰hetet‰‰n summauspalvelimien portteja
 		System.out.println("L‰hetet‰‰n " + t + " porttia");
 		for(int tt = 0; tt  < t; tt++){
+			System.out.println("Kirjoitetaan oliovirtaan porttia " + (Integer.parseInt(tcpPort) + 1 + tt));
 			objectOut.writeInt(Integer.parseInt(tcpPort) + 1 + tt);
+			objectOut.flush();
+			System.out.println("Kirjoitettu oliovirtaan");
 		}
+		System.out.println("Luodaan summapalveluita");
+		// M‰‰ritell‰‰n lokero-olio loppuun kun tiedet‰‰n sen pituus
+		lokerot = new Lokero(t);
 		for(int x = 0; x < t; x++){
-			Summaaja summaaja = new Summaaja(x+1);
+			Summaaja summaaja = new Summaaja(Integer.parseInt(tcpPort) + 1 + x, x);
 			(new Thread(summaaja)).start();
+			System.out.println("Summapalvelu " + x + " k‰ynnistetty");
 		}
-
+		int kysely;
+		while(true){
+			System.out.println("Odotetaan kyselyj‰");
+			try{
+				tcpSocket.setSoTimeout(60000);
+				kysely = objectIn.readInt();
+				System.out.println("Kysely " + kysely + " vastaanotettu");
+				if(kysely == 0){
+					System.out.println("Lopetuskysely vastaanotettu. Lopetetaan");
+					System.exit(0);
+				}
+				else if(kysely == 1){
+					System.out.println("Summakysely vastaanotettu. Palautetaan kaikkien lukujen summa");
+					objectOut.writeInt(getSummienSumma(lokerot.getLista()));
+					objectOut.flush();
+				}
+				else if(kysely == 2){
+					System.out.println("Suuruuskysely vastaanotettu. Palautetaan suurin summa");
+					objectOut.writeInt(getSuurin(lokerot.getLista()));
+					objectOut.flush();
+				}
+				else if(kysely == 3){
+					System.out.println("M‰‰r‰kysely vastaanotettu. Palautetaan vastaanotettujen lukujen lukum‰‰r‰.");
+					objectOut.writeInt(lokerot.getMaara());
+					objectOut.flush();
+				}
+				else{
+					System.out.println("Virheellinen kysely vastaanotettu. Kirjoitetaan virtaan -1");
+					objectOut.writeInt(-1);
+					objectOut.flush();
+				}
+			}catch(Exception e){
+				System.out.println("Kyselyvirhe. Lopetetaan");
+				System.exit(0);
+			}
+		}
 	}
 	//Etsit‰‰n ja palautetaan listan suurin summa
-	int getSuurin(int[] lista){
-		int x = lista[0];
-		for(int i = 0; i < lista.length; i++){
-			if(lista[i] > x){
-				x = lista[i];
+	static int getSuurin(int[] lista){
+		int x = 0;
+		for(int i = 1; i < lista.length; i++){
+			if(lista[i] > lista[x]){
+				x = i;
 			}
 		}
 		return x;
 	}
 	//Etsit‰‰n ja palautetaan listan summien summa
-	int getSummienSumma(int[] lista){
+	static int getSummienSumma(int[] lista){
 		int y = lista[0];
-		for(int i = 0; i < lista.length; i++){
+		for(int i = 1; i < lista.length; i++){
 			y = y + lista[i];
 		}
 		return y;

@@ -14,7 +14,7 @@ public class Lokero {
 	}
 
 	// summaa listan kohtaan "kohta" "maaran"
-	public void lisaa(int kohta, int maara){
+	public synchronized void lisaa(int kohta, int maara){
 		this.lista[kohta] += maara;
 		this.lukumaara++;
 	}
