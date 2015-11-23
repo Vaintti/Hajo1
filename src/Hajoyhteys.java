@@ -74,7 +74,25 @@ public class Hajoyhteys {
 		}
 
 	}
-
+	//Etsitään ja palautetaan listan suurin summa
+	int getSuurin(int[] lista){
+		int x = lista[0];
+		for(int i = 0; i < lista.length; i++){
+			if(lista[i] > x){
+				x = lista[i];
+			}
+		}
+		return x;
+	}
+	//Etsitään ja palautetaan listan summien summa
+	int getSummienSumma(int[] lista){
+		int y = lista[0];
+		for(int i = 0; i < lista.length; i++){
+			y = y + lista[i];
+		}
+		return y;
+	}
+	
 	// Lähettää tcp portin udp pakettina
 	public static void sendTCPPort(byte[] tcpPortBytes, InetAddress os, int udpPort) {
 		try {
