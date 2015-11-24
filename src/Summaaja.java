@@ -10,15 +10,21 @@ public class Summaaja implements Runnable {
 	private ObjectInputStream objectIn;
 	private int x;
 	private int indeksi;
+	private boolean running;
 
 	// Konstruktori
 	public Summaaja(int portti, int indeksi){
 		this.port = portti;
 		this.indeksi = indeksi;
 	}
+	
+	public void sammuta(){
+		running = false;
+	}
 
 	// S‰ikeen suorituksessa suorittuva metodi
 	public void run(){
+		running = true;
 
 		// Yritet‰‰n luoda serversoketti ja soketti
 		try{
@@ -39,7 +45,7 @@ public class Summaaja implements Runnable {
 			return;
 		}
 
-		while(true){
+		while(running){
 			
 			// Yritet‰‰n lukea lukua oliosis‰‰ntulovirrasta
 			try{

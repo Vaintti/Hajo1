@@ -154,9 +154,6 @@ public class Hajoyhteys {
 				}
 			}catch(SocketTimeoutException e){
 				System.out.println("Soketin aikakatkaisu. Lopetetaan summauspalvelijat ja sovellus");
-				for(Thread thread : threads){
-					thread.interrupt();
-				}
 				System.exit(0);
 			}
 		}
